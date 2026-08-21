@@ -42,15 +42,23 @@ To preview locally before pushing, run `python3 -m http.server` in this folder a
 | What | Where |
 |---|---|
 | Name, role, intro | `.hero` block near the top of `<body>` |
+| Headshot | `.hero-photo` `<img>` — drop a `photo.jpg` in the repo root; the `onerror` handler removes the tag cleanly if it's missing, so the site never shows a broken-image icon |
+| News / milestones | `<li class="entry">` items under `#news`, newest first |
 | Research threads | the four `<li>` items under `#research` |
+| Publications | `<li class="entry">` items under `#publications` (see below) |
+| Skills | `.skill-group` blocks under `#skills` |
 | Education, talks, teaching | `<li class="entry">` items in each section |
 | Email, GitHub, LinkedIn | the `.contact-list` under `#contact` |
 | Colors | the five hex values in `:root` at the top of the `<style>` block |
 | Fonts | the Google Fonts `<link>` plus `--display`, `--body`, `--mono` |
 
+## Adding your photo
+
+Export a square-ish headshot as `photo.jpg` and drop it in the repo root — the `<img class="hero-photo">` tag already points at it. Until the file exists, the `onerror` handler removes the broken image automatically, so the hero degrades gracefully with no photo.
+
 ## Adding publications
 
-There is no publications section yet, since there is nothing to put in it. When there is, copy the `#talks` section, change the id and label, and use the same `.entry` markup — the year column and title/venue structure already work for citations:
+The `#publications` section currently shows an empty-state paragraph plus an HTML comment with a ready-to-uncomment template. When you have a paper, delete the placeholder paragraph, uncomment the template, and duplicate the `<li class="entry">` per publication — the year column and title/venue/links structure already work for citations:
 
 ```html
 <li class="entry">
@@ -63,7 +71,13 @@ There is no publications section yet, since there is nothing to put in it. When 
 </li>
 ```
 
-Add a link to it in the `.topbar-links` nav at the same time.
+## Adding a skill
+
+Each box under `#skills` is a `.skill-group` with a title and a `.tags` list — add an `<li>` to the relevant group, or copy a `.skill-group` block for a new category.
+
+## Adding news
+
+Copy an `<li class="entry">` under `#news` and put it at the top — the list reads newest first, same markup as talks/education.
 
 ## Your CV
 
@@ -84,6 +98,10 @@ Once you add a second page, pull the CSS out so the two pages share it:
 3. Same idea for the `<script>` → `assets/site.js`, loaded with `<script src="assets/site.js" defer></script>`.
 
 Keep the paths relative (`assets/…`, no leading slash). On a project site a leading slash points at `scichemcode.github.io/assets/…`, which does not exist — this is the single most common way a project site breaks.
+
+## Visitor count
+
+The footer shows a live visitor count from [visitor-badge.laobi.icu](https://visitor-badge.laobi.icu/), a free third-party badge service — there's no backend on this site to count visits itself. It's a single `<img>` tag keyed by `page_id=scichemcode.alam-website`; each page load pings that service, which returns an SVG with the running count. Colors are set via `left_color`/`right_color` query params to match the site palette. If you rename the repo or fork this site, change `page_id` to something unique to you, or the count will be shared with whoever else used that id first.
 
 ## Custom domain
 

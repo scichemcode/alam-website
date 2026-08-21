@@ -121,6 +121,16 @@ a:hover{border-bottom-color:var(--accent)}
   padding-bottom:clamp(3rem,7vw,5rem);
   border-bottom:1px solid var(--rule);
 }
+.hero-photo{
+  display:block;
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid var(--rule);
+  background:var(--ground-deep);
+  margin:0 0 1.1rem;
+}
 .hero-name{
   font-family:var(--display);
   font-weight:700;
@@ -234,6 +244,34 @@ a:hover{border-bottom-color:var(--accent)}
   margin-top:.4rem;
 }
 
+/* ---- skills ---- */
+.skills-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1.75rem 2rem;
+}
+.skill-group-title{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:1rem;
+  letter-spacing:-.01em;
+  margin:0 0 .65rem;
+}
+.tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.4rem}
+.tags li{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.02em;
+  color:var(--slate);
+  border:1px solid var(--rule);
+  background:var(--ground-deep);
+  padding:.25rem .55rem;
+  border-radius:2px;
+}
+@media (max-width:560px){
+  .skills-grid{grid-template-columns:1fr}
+}
+
 /* ---- contact ---- */
 .contact-list{
   margin:0;
@@ -252,9 +290,14 @@ a:hover{border-bottom-color:var(--accent)}
   font-size:.7rem;
   color:var(--slate);
   letter-spacing:.05em;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.6rem;
 }
 .colophon a{color:var(--slate);border-bottom:1px solid var(--rule)}
 .colophon a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.colophon img{display:block;vertical-align:middle}
 
 /* ============================================================
    RESPONSIVE
@@ -282,7 +325,10 @@ a:hover{border-bottom-color:var(--accent)}
   <nav class="topbar">
     <span class="topbar-mark">Denton, Texas</span>
     <div class="topbar-links">
+      <a href="#news">News</a>
       <a href="#research">Research</a>
+      <a href="#publications">Publications</a>
+      <a href="#skills">Skills</a>
       <a href="#education">Education</a>
       <a href="#talks">Talks</a>
       <a href="#teaching">Teaching</a>
@@ -293,6 +339,7 @@ a:hover{border-bottom-color:var(--accent)}
 
   <header class="hero">
     <div>
+      <img class="hero-photo" src="photo.jpg" alt="Kriti Alam" width="88" height="88" loading="eager" onerror="this.remove()">
       <h1 class="hero-name">Kriti<br>Alam</h1>
       <p class="hero-role">
         PhD candidate in theoretical and computational chemistry at the University of North Texas. I build <em>machine-learned force fields</em> for condensed-phase systems, and the infrastructure that trains them.
@@ -309,6 +356,63 @@ a:hover{border-bottom-color:var(--accent)}
   </header>
 
   <main id="main">
+
+    <section class="band" id="news">
+      <h2 class="band-label">News</h2>
+      <div class="band-body">
+        <ul class="entries">
+
+          <li class="entry">
+            <span class="entry-when">Apr 2026</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; ACS DFW Meetings in Miniature</p>
+              <p class="entry-where">Texas Wesleyan University</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">Aug 2025</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; ACS Fall Meeting</p>
+              <p class="entry-where">Washington, D.C.</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">2025</span>
+            <div>
+              <p class="entry-title">Began advising under Prof. Hsin-Yu Ko</p>
+              <p class="entry-where">Joined the <a href="https://ko-research.org/">Ko Research Group</a> at UNT</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">Apr 2025</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; ACS DFW Meetings in Miniature</p>
+              <p class="entry-where">East Texas A&amp;M University</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">Feb 2025</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; Texas Computational Chemistry Symposium</p>
+              <p class="entry-where">Texas Woman&rsquo;s University</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">Fall 2023</span>
+            <div>
+              <p class="entry-title">Awarded Best Teaching Assistant</p>
+              <p class="entry-where">Chemistry Resource Center, University of North Texas</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
 
     <section class="band" id="about">
       <h2 class="band-label">About</h2>
@@ -349,6 +453,63 @@ a:hover{border-bottom-color:var(--accent)}
           </li>
 
         </ul>
+      </div>
+    </section>
+
+    <section class="band" id="publications">
+      <h2 class="band-label">Publications</h2>
+      <div class="band-body">
+        <p>Manuscripts from this work are in preparation. This section will list peer-reviewed papers and preprints as they appear.</p>
+        <!--
+        Copy this block per publication once you have one:
+        <ul class="entries">
+          <li class="entry">
+            <span class="entry-when">2026</span>
+            <div>
+              <p class="entry-title">Paper title</p>
+              <p class="entry-where">Authors &middot; <em>Journal</em>, volume, pages</p>
+              <p class="entry-links"><a href="#">DOI</a><a href="#">arXiv</a><a href="#">Code</a></p>
+            </div>
+          </li>
+        </ul>
+        -->
+      </div>
+    </section>
+
+    <section class="band" id="skills">
+      <h2 class="band-label">Skills</h2>
+      <div class="band-body">
+        <div class="skills-grid">
+
+          <div class="skill-group">
+            <h3 class="skill-group-title">Electronic structure &amp; simulation</h3>
+            <ul class="tags">
+              <li>Quantum ESPRESSO</li><li>DFT</li><li>AIMD</li><li>Wannier localization</li><li>LAMMPS</li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3 class="skill-group-title">Machine learning for chemistry</h3>
+            <ul class="tags">
+              <li>DeePMD-kit</li><li>DP-GEN</li><li>MACE</li><li>Active learning</li><li>PLUMED</li><li>Metadynamics</li><li>SOAP descriptors</li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3 class="skill-group-title">Infrastructure &amp; compute</h3>
+            <ul class="tags">
+              <li>Kubernetes</li><li>Docker</li><li>Apptainer</li><li>CUDA</li><li>Slurm / HPC scheduling</li>
+            </ul>
+          </div>
+
+          <div class="skill-group">
+            <h3 class="skill-group-title">Languages &amp; tooling</h3>
+            <ul class="tags">
+              <li>Python</li><li>Bash</li><li>Git</li><li>LaTeX</li>
+            </ul>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -486,7 +647,8 @@ a:hover{border-bottom-color:var(--accent)}
   </main>
 
   <footer class="colophon">
-    <a href="https://ko-research.org/">Ko Research Group</a> &middot; Department of Chemistry, University of North Texas &middot; Last updated August 2026
+    <span><a href="https://ko-research.org/">Ko Research Group</a> &middot; Department of Chemistry, University of North Texas &middot; Last updated August 2026</span>
+    <img src="https://visitor-badge.laobi.icu/badge?page_id=scichemcode.alam-website&amp;left_color=%235C6675&amp;right_color=%231F44D8" alt="Visitor count" width="80" height="20" loading="lazy">
   </footer>
 
 </div>
