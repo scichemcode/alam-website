@@ -244,6 +244,32 @@ a:hover{border-bottom-color:var(--accent)}
   margin-top:.4rem;
 }
 
+/* ---- figure gallery ---- */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.25rem;
+  margin:1.75rem 0 0;
+}
+.gallery-item{
+  border:1px dashed var(--rule);
+  background:var(--ground-deep);
+  padding:.5rem;
+}
+.gallery-item img{display:block;width:100%;height:auto}
+.gallery-caption{
+  margin:.55rem 0 0;
+  font-family:var(--mono);
+  font-size:.66rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--slate);
+  text-align:center;
+}
+@media (max-width:760px){
+  .gallery{grid-template-columns:1fr}
+}
+
 /* ---- skills ---- */
 .skills-grid{
   display:grid;
@@ -327,6 +353,7 @@ a:hover{border-bottom-color:var(--accent)}
     <div class="topbar-links">
       <a href="#news">News</a>
       <a href="#research">Research</a>
+      <a href="#microelectronics">Microelectronics</a>
       <a href="#publications">Publications</a>
       <a href="#skills">Skills</a>
       <a href="#education">Education</a>
@@ -453,6 +480,27 @@ a:hover{border-bottom-color:var(--accent)}
           </li>
 
         </ul>
+      </div>
+    </section>
+
+    <section class="band" id="microelectronics">
+      <h2 class="band-label">Simulation of Microelectronic Surfaces</h2>
+      <div class="band-body">
+        <p>Hydrofluoric acid is the standard wet-etch chemistry for removing silicon dioxide in semiconductor fabrication, but the atomistic sequence of bond-breaking events at the SiO<sub>2</sub>/HF interface is hard to resolve experimentally. We use ab initio molecular dynamics to follow the reaction as it actually happens rather than assume a mechanism in advance: an explicit HF molecule is placed at a hydroxylated SiO<sub>2</sub> surface submerged in a slab of liquid water, and the trajectory is propagated at the DFT level so that proton transfers, the nucleophilic attack of fluoride on a silicon center, and the eventual cleavage of a Si&ndash;O bond all emerge from the dynamics itself. Watching the surrounding hydrogen-bond network frame by frame shows how water mediates each proton transfer and stabilizes the departing silicate fragment &mdash; detail that a static reaction-pathway calculation would not capture.</p>
+        <div class="gallery">
+          <div class="gallery-item">
+            <img src="etching-1.png" alt="Simulation cell of a hydroxylated SiO2 slab above a layer of liquid water, ball-and-stick representation">
+            <p class="gallery-caption">SiO&#8322; slab &middot; water layer</p>
+          </div>
+          <div class="gallery-item">
+            <img src="etching-2.png" alt="Same simulation cell rendered with space-filling atoms, showing an HF molecule (green) in the water layer near the SiO2 surface">
+            <p class="gallery-caption">HF approaching the surface</p>
+          </div>
+          <div class="gallery-item">
+            <img src="etching-3.png" alt="Close-up of the SiO2 surface, an HF molecule, and nearby water molecules at the reactive interface">
+            <p class="gallery-caption">Reactive interface, close-up</p>
+          </div>
+        </div>
       </div>
     </section>
 
