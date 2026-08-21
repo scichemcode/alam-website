@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kriti Alam — Theoretical &amp; Computational Chemistry</title>
+<meta name="description" content="PhD candidate in theoretical and computational chemistry at the University of North Texas. Machine-learned force fields, ab initio molecular dynamics, and reproducible simulation infrastructure.">
+
+<!-- Open Graph: what shows up when someone pastes your link into Slack or Twitter -->
+<meta property="og:title" content="Kriti Alam">
+<meta property="og:description" content="Machine-learned force fields and ab initio molecular dynamics.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://scichemcode.github.io/alam-website/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   TOKENS — change these five colors and the whole site shifts
+   ============================================================ */
+:root{
+  --ground:#EDEFF2;        /* cold paper */
+  --ground-deep:#E3E7EC;   /* recessed panels */
+  --ink:#14181F;           /* body text */
+  --slate:#5C6675;         /* secondary text */
+  --rule:#C7CDD6;          /* hairlines, lattice */
+  --accent:#1F44D8;        /* links, live elements */
+
+  --display:"Space Grotesk",system-ui,sans-serif;
+  --body:"Newsreader",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+
+  --measure:62ch;
+  --gap:clamp(2.5rem,6vw,5.5rem);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background-color:var(--ground);
+  /* the lattice: a faint simulation cell behind everything */
+  background-image:
+    linear-gradient(to right,var(--rule) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--rule) 1px,transparent 1px);
+  background-size:34px 34px;
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:1.0625rem;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* soften the lattice so it reads as texture, not graph paper */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:var(--ground);
+  opacity:.86;
+  pointer-events:none;
+  z-index:-1;
+}
+
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(31,68,216,.28)}
+a:hover{border-bottom-color:var(--accent)}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:1rem;top:1rem;background:var(--ink);color:var(--ground);padding:.6rem 1rem;z-index:10}
+
+/* ============================================================
+   SHELL
+   ============================================================ */
+.shell{
+  max-width:1080px;
+  margin:0 auto;
+  padding:clamp(1.5rem,4vw,3rem) clamp(1.25rem,5vw,3rem) 5rem;
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:1.5rem;
+  flex-wrap:wrap;
+  padding-bottom:2.5rem;
+}
+.topbar-mark{
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--slate);
+}
+.topbar-links{
+  display:flex;
+  gap:1.4rem;
+  font-family:var(--mono);
+  font-size:.78rem;
+}
+.topbar-links a{border-bottom:none;color:var(--slate)}
+.topbar-links a:hover{color:var(--accent)}
+
+/* ============================================================
+   HERO — name beside a live periodic cell
+   ============================================================ */
+.hero{
+  display:grid;
+  grid-template-columns:1fr 240px;
+  gap:var(--gap);
+  align-items:end;
+  padding-bottom:clamp(3rem,7vw,5rem);
+  border-bottom:1px solid var(--rule);
+}
+.hero-name{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:clamp(2.75rem,8.5vw,5.25rem);
+  line-height:.94;
+  letter-spacing:-.035em;
+  margin:0 0 1.25rem;
+}
+.hero-role{
+  margin:0 0 1.75rem;
+  max-width:46ch;
+  font-size:1.15rem;
+  color:var(--slate);
+}
+.hero-role em{color:var(--ink);font-style:italic}
+.hero-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem 1.25rem;
+  font-family:var(--mono);
+  font-size:.78rem;
+}
+
+/* the signature element */
+.cell{
+  position:relative;
+  width:100%;
+  aspect-ratio:1;
+  border:1px dashed var(--rule);
+  background:var(--ground-deep);
+}
+.cell canvas{display:block;width:100%;height:100%}
+.cell-caption{
+  position:absolute;
+  left:0;
+  top:calc(100% + .6rem);
+  font-family:var(--mono);
+  font-size:.66rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--slate);
+}
+
+/* ============================================================
+   SECTIONS — left rail carries a margin label, notebook style
+   ============================================================ */
+.band{
+  display:grid;
+  grid-template-columns:150px 1fr;
+  gap:var(--gap);
+  padding:clamp(3rem,6vw,4.5rem) 0;
+  border-bottom:1px solid var(--rule);
+}
+.band-label{
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--slate);
+  position:sticky;
+  top:2rem;
+  align-self:start;
+}
+.band-body{max-width:var(--measure)}
+.band-body > p{margin:0 0 1.15rem}
+.band-body > p:last-child{margin-bottom:0}
+
+.lede{font-size:1.2rem;line-height:1.55}
+
+/* ---- research threads ---- */
+.threads{list-style:none;margin:0;padding:0;display:grid;gap:2rem}
+.thread-title{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:1.15rem;
+  letter-spacing:-.01em;
+  margin:0 0 .35rem;
+}
+.thread-note{margin:0;color:var(--slate)}
+.thread-tools{
+  margin:.5rem 0 0;
+  font-family:var(--mono);
+  font-size:.72rem;
+  color:var(--slate);
+}
+
+/* ---- dated entries: talks, education, teaching ---- */
+.entries{list-style:none;margin:0;padding:0;display:grid;gap:1.6rem}
+.entry{display:grid;grid-template-columns:5.5rem 1fr;gap:1rem}
+.entry-when{
+  font-family:var(--mono);
+  font-size:.72rem;
+  color:var(--slate);
+  padding-top:.35rem;
+  line-height:1.5;
+}
+.entry-title{margin:0 0 .2rem;font-weight:500}
+.entry-where{margin:0;color:var(--slate);font-size:.96rem}
+.entry-where em{font-style:italic}
+.entry-links{margin:.35rem 0 0;font-family:var(--mono);font-size:.72rem;display:flex;gap:1rem}
+
+.award{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:.68rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--accent);
+  border:1px solid rgba(31,68,216,.3);
+  padding:.15rem .45rem;
+  margin-top:.4rem;
+}
+
+/* ---- contact ---- */
+.contact-list{
+  margin:0;
+  display:grid;
+  grid-template-columns:5.5rem 1fr;
+  gap:.55rem 1rem;
+  font-family:var(--mono);
+  font-size:.82rem;
+}
+.contact-list dt{color:var(--slate)}
+.contact-list dd{margin:0}
+
+.colophon{
+  padding-top:2.5rem;
+  font-family:var(--mono);
+  font-size:.7rem;
+  color:var(--slate);
+  letter-spacing:.05em;
+}
+.colophon a{color:var(--slate);border-bottom:1px solid var(--rule)}
+.colophon a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;gap:3rem;align-items:start}
+  .cell{max-width:200px}
+  .band{grid-template-columns:1fr;gap:1.25rem}
+  .band-label{position:static}
+  .entry{grid-template-columns:1fr;gap:.3rem}
+  .entry-when{padding-top:0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="shell">
+
+  <nav class="topbar">
+    <span class="topbar-mark">Denton, Texas</span>
+    <div class="topbar-links">
+      <a href="#research">Research</a>
+      <a href="#education">Education</a>
+      <a href="#talks">Talks</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#contact">Contact</a>
+      <a href="cv.pdf">CV</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <h1 class="hero-name">Kriti<br>Alam</h1>
+      <p class="hero-role">
+        PhD candidate in theoretical and computational chemistry at the University of North Texas. I build <em>machine-learned force fields</em> for condensed-phase systems, and the infrastructure that trains them.
+      </p>
+      <p class="hero-meta">
+        <span>MLFFs</span><span>Ab initio MD</span><span>DFT</span><span>Kubernetes</span>
+      </p>
+    </div>
+
+    <div class="cell">
+      <canvas id="pbc" aria-hidden="true"></canvas>
+      <span class="cell-caption">Periodic cell &middot; 12 particles</span>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="band" id="about">
+      <h2 class="band-label">About</h2>
+      <div class="band-body">
+        <p class="lede">I work on making quantum-accurate simulation cheap enough to be useful at the length and time scales where chemistry actually happens.</p>
+        <p>I am in Prof. Hsin-Yu Ko&rsquo;s group, the <a href="https://ko-research.org/">Ko Research Group</a> at UNT, developing machine-learned force fields for polymer structure prediction, computing infrared spectra in situ from ab initio trajectories, and using localized orbitals to find reaction pathways in condensed-phase systems. A good part of my time goes to the unglamorous half of that problem: generating trustworthy training data, and building pipelines that run the same way twice.</p>
+        <p>Before this I worked with Prof. Omar Valsson on machine-learned collective variables for driving polymorphic transitions in molecular crystals, and before that on lipid bilayer dynamics under salt at IIT Jodhpur. Both taught me not to trust a simulation until I have watched it converge from two directions.</p>
+      </div>
+    </section>
+
+    <section class="band" id="research">
+      <h2 class="band-label">Research</h2>
+      <div class="band-body">
+        <ul class="threads">
+
+          <li>
+            <h3 class="thread-title">Machine-learned force fields for polymer structure prediction</h3>
+            <p class="thread-note">Active-learning loops that decide for themselves which configurations are worth a DFT calculation, applied to polymer systems where the interesting physics lives in weak, many-body interactions.</p>
+            <p class="thread-tools">DeePMD-kit &middot; DP-GEN &middot; LAMMPS &middot; MACE</p>
+          </li>
+
+          <li>
+            <h3 class="thread-title">In-situ vibrational spectroscopy and reaction discovery</h3>
+            <p class="thread-note">Infrared spectra recovered from dipole autocorrelation along ab initio trajectories, and localized orbitals used to trace bond making and breaking in condensed-phase reactions rather than guessing at a mechanism in advance.</p>
+            <p class="thread-tools">Quantum ESPRESSO &middot; Wannier localization &middot; AIMD</p>
+          </li>
+
+          <li>
+            <h3 class="thread-title">Simulation infrastructure that survives contact with reality</h3>
+            <p class="thread-note">Containerized, GPU-accelerated DFT and MD dispatched onto Kubernetes rather than a batch scheduler &mdash; with the isolation, reproducibility, and cleanup guarantees a multi-week active-learning campaign needs.</p>
+            <p class="thread-tools">Kubernetes &middot; Docker &middot; Apptainer &middot; CUDA</p>
+          </li>
+
+          <li>
+            <h3 class="thread-title">Collective variables for molecular crystal polymorphism</h3>
+            <p class="thread-note">Earlier work with Prof. Omar Valsson: learning collective variables from data to drive polymorphic transitions in molecular crystals, and sampling the free-energy landscapes between forms.</p>
+            <p class="thread-tools">PLUMED &middot; Metadynamics &middot; SOAP descriptors</p>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <section class="band" id="education">
+      <h2 class="band-label">Education</h2>
+      <div class="band-body">
+        <ul class="entries">
+
+          <li class="entry">
+            <span class="entry-when">2023&ndash;</span>
+            <div>
+              <p class="entry-title">Ph.D., Chemistry</p>
+              <p class="entry-where">University of North Texas &middot; Advisor: <a href="https://ko-research.org/">Prof. Hsin-Yu Ko</a> (since 2025), previously Prof. Omar Valsson</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">2021&ndash;2023</span>
+            <div>
+              <p class="entry-title">M.Sc., Chemistry</p>
+              <p class="entry-where">Indian Institute of Technology Jodhpur &middot; Advisor: Prof. Ananya Debnath</p>
+              <p class="entry-where"><em>Understanding lipid dynamics in model lipid bilayers under the influence of salts using molecular dynamics simulations</em></p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <section class="band" id="talks">
+      <h2 class="band-label">Talks &amp; schools</h2>
+      <div class="band-body">
+        <ul class="entries">
+
+          <li class="entry">
+            <span class="entry-when">Apr 2026</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; ACS DFW Meetings in Miniature</p>
+              <p class="entry-where">Texas Wesleyan University</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">Aug 2025</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; ACS Fall Meeting</p>
+              <p class="entry-where">Washington, D.C.</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">Apr 2025</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; ACS DFW Meetings in Miniature</p>
+              <p class="entry-where">East Texas A&amp;M University</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">Feb 2025</span>
+            <div>
+              <p class="entry-title">Oral presentation &mdash; Texas Computational Chemistry Symposium</p>
+              <p class="entry-where">Texas Woman&rsquo;s University</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">School</span>
+            <div>
+              <p class="entry-title">i-COMSE 7th Molecular Dynamics Summer School</p>
+              <p class="entry-where">Boise State University &middot; Python for MD, LAMMPS, HPC</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">School</span>
+            <div>
+              <p class="entry-title">RESOLV Summer School on Solvation Science</p>
+              <p class="entry-where">Ruhr University Bochum, Germany</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <section class="band" id="teaching">
+      <h2 class="band-label">Teaching</h2>
+      <div class="band-body">
+        <ul class="entries">
+
+          <li class="entry">
+            <span class="entry-when">2023&ndash;</span>
+            <div>
+              <p class="entry-title">Chemistry Resource Center</p>
+              <p class="entry-where">General chemistry concept clarification, one on one and in small groups.</p>
+              <span class="award">Best Teaching Assistant, Fall 2023</span>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">2024, 2025</span>
+            <div>
+              <p class="entry-title">Teaching assistant &mdash; Physical Chemistry II</p>
+              <p class="entry-where">Spring 2024 with Dr. Omar Valsson; Spring 2025 with Dr. Hsin-Yu Ko.</p>
+            </div>
+          </li>
+
+          <li class="entry">
+            <span class="entry-when">2024&ndash;2025</span>
+            <div>
+              <p class="entry-title">Laboratory instructor &mdash; Physical and Organic Chemistry</p>
+              <p class="entry-where">Fall 2024 and Spring 2025.</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <section class="band" id="contact">
+      <h2 class="band-label">Contact</h2>
+      <div class="band-body">
+        <p>I am looking for postdoctoral positions in the US, working on machine-learned force fields for soft and porous materials and on quantum-accurate training data. Happy to hear from anyone working nearby.</p>
+        <dl class="contact-list">
+          <dt>Group</dt><dd><a href="https://ko-research.org/">ko-research.org</a></dd>
+          <dt>Email</dt><dd><a href="mailto:KritiAlam@my.unt.edu">KritiAlam@my.unt.edu</a></dd>
+          <dt>GitHub</dt><dd><a href="https://github.com/scichemcode">scichemcode</a></dd>
+          <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/kritialam">kritialam</a></dd>
+          <dt>CV</dt><dd><a href="cv.pdf">cv.pdf</a></dd>
+        </dl>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="colophon">
+    <a href="https://ko-research.org/">Ko Research Group</a> &middot; Department of Chemistry, University of North Texas &middot; Last updated August 2026
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   The periodic cell in the hero.
+   Particles drift, exit one face, and re-enter the opposite one.
+   Near a boundary they cast a ghost image on the far side —
+   which is how you actually draw a PBC cell.
+   ============================================================ */
+(function () {
+  var canvas = document.getElementById('pbc');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N = 12;
+  var R = 3.2;          // particle radius, css px
+  var GHOST = 0.11;     // fraction of the cell where a ghost appears
+  var size = 0;
+  var parts = [];
+
+  for (var i = 0; i < N; i++) {
+    parts.push({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random() - 0.5) * 0.00055,
+      vy: (Math.random() - 0.5) * 0.00055
+    });
+  }
+
+  function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.getBoundingClientRect();
+    size = rect.width;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function dot(px, py, alpha) {
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.arc(px, py, R, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, size, size);
+    ctx.fillStyle = getComputedStyle(document.documentElement)
+      .getPropertyValue('--accent').trim() || '#1F44D8';
+
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      var px = p.x * size, py = p.y * size;
+      dot(px, py, 0.9);
+
+      // ghost images across each face it is close to
+      var gx = p.x < GHOST ? px + size : (p.x > 1 - GHOST ? px - size : null);
+      var gy = p.y < GHOST ? py + size : (p.y > 1 - GHOST ? py - size : null);
+      if (gx !== null) dot(gx, py, 0.22);
+      if (gy !== null) dot(px, gy, 0.22);
+      if (gx !== null && gy !== null) dot(gx, gy, 0.1);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function step() {
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      // wrap: this is the whole point
+      if (p.x < 0) p.x += 1; else if (p.x >= 1) p.x -= 1;
+      if (p.y < 0) p.y += 1; else if (p.y >= 1) p.y -= 1;
+    }
+    draw();
+    requestAnimationFrame(step);
+  }
+
+  resize();
+  window.addEventListener('resize', function () { resize(); draw(); });
+
+  if (still) draw(); else step();
+})();
+</script>
+
+</body>
+</html>
