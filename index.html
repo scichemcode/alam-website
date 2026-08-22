@@ -89,7 +89,7 @@ a:hover{border-bottom-color:var(--accent)}
 .topbar{
   display:flex;
   justify-content:space-between;
-  align-items:baseline;
+  align-items:center;
   gap:1.5rem;
   flex-wrap:wrap;
   padding-bottom:2.5rem;
@@ -101,14 +101,81 @@ a:hover{border-bottom-color:var(--accent)}
   text-transform:uppercase;
   color:var(--slate);
 }
-.topbar-links{
-  display:flex;
-  gap:1.4rem;
-  font-family:var(--mono);
-  font-size:.78rem;
+
+/* ---- side navigator ---- */
+.nav-toggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:2.2rem;
+  height:2.2rem;
+  border:1px solid var(--rule);
+  background:var(--ground-deep);
+  color:var(--ink);
+  cursor:pointer;
+  border-radius:2px;
+  padding:0;
 }
-.topbar-links a{border-bottom:none;color:var(--slate)}
-.topbar-links a:hover{color:var(--accent)}
+.nav-toggle:hover{color:var(--accent);border-color:var(--accent)}
+.nav-toggle .icon-x{display:none}
+.nav-toggle[aria-expanded="true"] .icon-bars{display:none}
+.nav-toggle[aria-expanded="true"] .icon-x{display:block}
+
+.side-nav{
+  position:fixed;
+  top:0;
+  left:0;
+  height:100vh;
+  height:100dvh;
+  width:min(280px,80vw);
+  background:var(--ground);
+  border-right:1px solid var(--rule);
+  box-shadow:2px 0 16px rgba(20,24,31,.1);
+  transform:translateX(-100%);
+  transition:transform .25s ease;
+  z-index:20;
+  padding:clamp(1.5rem,4vw,2.5rem) 1.75rem;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.side-nav.open{transform:translateX(0)}
+@media (max-width:600px){
+  .side-nav{width:100%}
+}
+.side-nav-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:0 0 1.5rem;
+}
+.side-nav-label{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--slate);
+  margin:0;
+}
+.side-nav ul{list-style:none;margin:0;padding:0;display:grid;gap:1.1rem}
+.side-nav a{
+  font-family:var(--mono);
+  font-size:.85rem;
+  letter-spacing:.03em;
+  color:var(--slate);
+  border-bottom:none;
+}
+.side-nav a:hover{color:var(--accent)}
+
+.side-nav-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(20,24,31,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+  z-index:19;
+}
+.side-nav-backdrop.open{opacity:1;pointer-events:auto}
 
 /* ============================================================
    HERO — name beside a live periodic cell
@@ -244,6 +311,16 @@ a:hover{border-bottom-color:var(--accent)}
 }
 .video-thumb img{display:block;width:100%;height:auto}
 
+.slide-viewer{
+  max-width:640px;
+  aspect-ratio:16/10;
+  margin:.65rem 0 0;
+  border:1px dashed var(--rule);
+  background:var(--ground-deep);
+  padding:.5rem;
+}
+.slide-viewer iframe{display:block;width:100%;height:100%;border:0}
+
 .award{
   display:inline-block;
   font-family:var(--mono);
@@ -366,20 +443,48 @@ a:hover{border-bottom-color:var(--accent)}
 
   <nav class="topbar">
     <span class="topbar-mark">Denton, Texas</span>
-    <div class="topbar-links">
-      <a href="#news">News</a>
-      <a href="#research">Research</a>
-      <a href="#publications">Publications</a>
-      <a href="#skills">Skills</a>
-      <a href="#development">Development</a>
-      <a href="#research-experience">Research Experience</a>
-      <a href="#education">Education</a>
-      <a href="#talks">Talks</a>
-      <a href="#training">Training</a>
-      <a href="#teaching">Teaching</a>
-      <a href="#contact">Contact</a>
-      <a href="cv.pdf">CV</a>
+    <button type="button" id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="side-nav" aria-label="Open section navigation">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+        <g class="icon-bars" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="2" y1="5" x2="16" y2="5"></line>
+          <line x1="2" y1="9" x2="16" y2="9"></line>
+          <line x1="2" y1="13" x2="16" y2="13"></line>
+        </g>
+        <g class="icon-x" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="4" y1="4" x2="14" y2="14"></line>
+          <line x1="14" y1="4" x2="4" y2="14"></line>
+        </g>
+      </svg>
+    </button>
+  </nav>
+
+  <div id="side-nav-backdrop" class="side-nav-backdrop"></div>
+  <nav id="side-nav" class="side-nav" aria-label="Section navigation" aria-hidden="true">
+    <div class="side-nav-head">
+      <p class="side-nav-label">Sections</p>
+      <button type="button" id="side-nav-close" class="nav-toggle" aria-label="Close section navigation">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+          <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <line x1="4" y1="4" x2="14" y2="14"></line>
+            <line x1="14" y1="4" x2="4" y2="14"></line>
+          </g>
+        </svg>
+      </button>
     </div>
+    <ul>
+      <li><a href="#news">News</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#development">Development</a></li>
+      <li><a href="#research-experience">Research Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#talks">Talks</a></li>
+      <li><a href="#training">Training</a></li>
+      <li><a href="#teaching">Teaching</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="cv.pdf">CV</a></li>
+    </ul>
   </nav>
 
   <header class="hero">
@@ -605,7 +710,11 @@ a:hover{border-bottom-color:var(--accent)}
             <div>
               <p class="entry-title">M.Sc. Thesis: Bilayer Phase Transition in the Presence of Salts: A Molecular Dynamics Study</p>
               <p class="entry-where">Indian Institute of Technology Jodhpur &middot; Advisor: Prof. Ananya Debnath</p>
-              <p class="entry-links"><a href="Presentation-Bilayer-Phase-Transition.pptx">Slides (PPTX)</a></p>
+              <p class="entry-links"><a href="Presentation-Bilayer-Phase-Transition.pptx">Download (PPTX)</a></p>
+              <div class="slide-viewer">
+                <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fscichemcode.github.io%2Falam-website%2FPresentation-Bilayer-Phase-Transition.pptx" loading="lazy" title="M.Sc. thesis slide deck"></iframe>
+              </div>
+              <p class="gallery-caption">Slide navigator &middot; use the arrows below the deck</p>
             </div>
           </li>
 
@@ -780,6 +889,65 @@ a:hover{border-bottom-color:var(--accent)}
 </div>
 
 <script>
+/* ============================================================
+   Side navigator: a collapsible list of section links, toggled
+   by the icon button next to "Denton, Texas".
+   ============================================================ */
+(function () {
+  var toggle = document.getElementById('nav-toggle');
+  var panel = document.getElementById('side-nav');
+  var backdrop = document.getElementById('side-nav-backdrop');
+  var closeBtn = document.getElementById('side-nav-close');
+  if (!toggle || !panel || !backdrop) return;
+
+  function openNav() {
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    panel.setAttribute('aria-hidden', 'false');
+    panel.inert = false;
+    document.body.style.overflow = 'hidden';
+    var firstLink = panel.querySelector('a');
+    if (firstLink) firstLink.focus();
+  }
+
+  function closeNav() {
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    panel.setAttribute('aria-hidden', 'true');
+    panel.inert = true;
+    document.body.style.overflow = '';
+  }
+
+  panel.inert = true;
+
+  toggle.addEventListener('click', function () {
+    if (panel.classList.contains('open')) closeNav();
+    else openNav();
+  });
+
+  backdrop.addEventListener('click', closeNav);
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+      closeNav();
+      toggle.focus();
+    });
+  }
+
+  panel.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') closeNav();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && panel.classList.contains('open')) {
+      closeNav();
+      toggle.focus();
+    }
+  });
+})();
+
 /* ============================================================
    The periodic cell in the hero.
    Particles drift, exit one face, and re-enter the opposite one.
