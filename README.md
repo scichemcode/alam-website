@@ -42,7 +42,8 @@ To preview locally before pushing, run `python3 -m http.server` in this folder a
 | What | Where |
 |---|---|
 | Name, role, intro | `.hero` block near the top of `<body>` |
-| Headshot | `.hero-photo` `<img>` — drop a `photo.jpg` in the repo root; the `onerror` handler removes the tag cleanly if it's missing, so the site never shows a broken-image icon |
+| Headshot | `.hero-photo` `<img>` in the hero, currently `photo-2.jpg`; the `onerror` handler removes the tag cleanly if the file is missing, so the site never shows a broken-image icon |
+| Closing photo | `<figure class="gallery-item closing-photo">` right before the footer, currently `photo-1.jpg` |
 | News / milestones | `<li class="entry">` items under `#news`, newest first |
 | Research threads | the four `<li>` items under `#research` |
 | Publications | `<li class="entry">` items under `#publications` (see below) |
@@ -54,7 +55,7 @@ To preview locally before pushing, run `python3 -m http.server` in this folder a
 
 ## Adding your photo
 
-Export a square-ish headshot as `photo.jpg` and drop it in the repo root — the `<img class="hero-photo">` tag already points at it. Until the file exists, the `onerror` handler removes the broken image automatically, so the hero degrades gracefully with no photo.
+The hero avatar (`<img class="hero-photo">`) points at `photo-2.jpg`, and the closing photo before the footer points at `photo-1.jpg`. Swap either by dropping in a new file under that name, or repoint the `src` at whatever you name it. If the hero's file goes missing, the `onerror` handler removes the broken image automatically so it degrades gracefully; the closing photo has no such fallback since it's expected to always be there.
 
 ## Adding publications
 

@@ -269,6 +269,10 @@ a:hover{border-bottom-color:var(--accent)}
 @media (max-width:760px){
   .gallery{grid-template-columns:1fr}
 }
+.closing-photo{
+  max-width:340px;
+  margin:0 auto clamp(2.5rem,6vw,4rem);
+}
 
 /* ---- skills ---- */
 .skills-grid{
@@ -365,7 +369,7 @@ a:hover{border-bottom-color:var(--accent)}
 
   <header class="hero">
     <div>
-      <img class="hero-photo" src="photo.jpg" alt="Kriti Alam" width="88" height="88" loading="eager" onerror="this.remove()">
+      <img class="hero-photo" src="photo-2.jpg" alt="Kriti Alam" width="88" height="88" loading="eager" onerror="this.remove()">
       <h1 class="hero-name">Kriti<br>Alam</h1>
       <p class="hero-role">
         PhD candidate in theoretical and computational chemistry at the University of North Texas. I build <em>machine-learned force fields</em> for condensed-phase systems, and the infrastructure that trains them.
@@ -690,6 +694,11 @@ a:hover{border-bottom-color:var(--accent)}
     </section>
 
   </main>
+
+  <figure class="gallery-item closing-photo">
+    <img src="photo-1.jpg" alt="Kriti Alam presenting research at a conference, standing beside a projected slide">
+    <figcaption class="gallery-caption">Presenting research at a conference</figcaption>
+  </figure>
 
   <footer class="colophon">
     <span><a href="https://ko-research.org/">Ko Research Group</a> &middot; Department of Chemistry, University of North Texas &middot; Last updated August 2026</span>
