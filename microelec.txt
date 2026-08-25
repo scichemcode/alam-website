@@ -1,0 +1,1 @@
+Atomistic view on the mechanistic understanding of the etching of SiO2 using ab-initio MD to understand reaction pathways with the surface to answer questions in interest to the microelectronic industry: tools include orbital localization methods to understand reactivity. 
