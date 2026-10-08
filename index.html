@@ -391,6 +391,43 @@ a:hover{border-bottom-color:var(--accent)}
   .skills-grid{grid-template-columns:1fr}
 }
 
+/* ---- troubleshooting write-ups ---- */
+.howto-group + .howto-group{margin-top:2.5rem}
+.howto-group-title{
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--slate);
+  margin:0 0 1rem;
+}
+.howto p,.howto ul,.howto ol{margin:0 0 1rem}
+.howto ul,.howto ol{padding-left:1.25rem}
+.howto li{margin-bottom:.35rem}
+.howto-step{font-family:var(--display);font-weight:500;font-size:.95rem;margin:1.4rem 0 .5rem}
+.howto code{
+  font-family:var(--mono);
+  font-size:.82em;
+  background:var(--ground-deep);
+  border:1px solid var(--rule);
+  border-radius:2px;
+  padding:.05em .3em;
+  overflow-wrap:anywhere;
+}
+.howto pre{
+  margin:.5rem 0 .9rem;
+  padding:.75rem .9rem;
+  background:var(--ground-deep);
+  border:1px solid var(--rule);
+  border-radius:2px;
+  overflow-x:auto;
+  line-height:1.5;
+}
+.howto pre code{background:none;border:0;padding:0;font-size:.74rem;overflow-wrap:normal;white-space:pre}
+.howto details{border-top:1px solid var(--rule);padding-top:.8rem;margin-top:1.4rem}
+.howto summary{cursor:pointer;font-family:var(--mono);font-size:.75rem;color:var(--slate)}
+.howto details ol{margin-top:.8rem;font-size:.96rem;color:var(--slate)}
+
 /* ---- contact ---- */
 .contact-list{
   margin:0;
@@ -477,6 +514,7 @@ a:hover{border-bottom-color:var(--accent)}
       <li><a href="#publications">Publications</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#development">Development</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
       <li><a href="#research-experience">Research Experience</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#talks">Talks</a></li>
@@ -705,6 +743,70 @@ a:hover{border-bottom-color:var(--accent)}
           </li>
 
         </ul>
+      </div>
+    </section>
+
+    <section class="band" id="troubleshooting">
+      <h2 class="band-label">Claude-based Software Troubleshooting</h2>
+      <div class="band-body">
+
+        <div class="howto-group">
+          <h3 class="howto-group-title">Scientific visualization on WSL2</h3>
+
+          <article class="howto" id="ovito-wsl2-cursor">
+            <h4 class="thread-title">Fixing a disappearing mouse pointer in OVITO on WSL2</h4>
+
+            <p><strong>Problem:</strong> On Windows with WSL2, launching the OVITO GUI from a WSL terminal opened the window fine, but the mouse pointer kept disappearing inside it.</p>
+
+            <p class="howto-step">Diagnosis</p>
+            <ul>
+              <li><code>XDG_SESSION_TYPE</code> was empty while <code>DISPLAY=:0</code> and <code>WAYLAND_DISPLAY=wayland-0</code> were set, which pointed to WSLg. <code>uname -r</code> confirmed it (<code>...microsoft-standard-WSL2</code>).</li>
+              <li>WSL (2.6.3) and WSLg (1.0.71) were already up to date.</li>
+              <li>The problem is in WSLg&rsquo;s cursor handling (its RDP-based display layer), not in OVITO itself.</li>
+            </ul>
+
+            <p class="howto-step">What didn&rsquo;t help</p>
+            <ul>
+              <li><code>QT_QPA_PLATFORM=xcb</code> (OVITO&rsquo;s bundled Qt already uses xcb; it has no Wayland plugin)</li>
+              <li>Setting a cursor theme (<code>XCURSOR_THEME=Adwaita XCURSOR_SIZE=24</code>)</li>
+              <li>Forcing software OpenGL (<code>LIBGL_ALWAYS_SOFTWARE=1</code>)</li>
+            </ul>
+
+            <p class="howto-step">Fix: bypass WSLg with VcXsrv</p>
+            <ol>
+              <li>Install VcXsrv on Windows (<code>winget install marha.VcXsrv</code>).</li>
+              <li>Start XLaunch with <em>Multiple windows</em>, <em>Start no client</em>, <strong>Disable access control</strong> checked, and <strong>Native opengl</strong> unchecked.</li>
+              <li>Allow WSL to reach the X server. In NAT networking mode the WSL network counts as Public, so add a firewall rule restricted to the WSL subnet (admin Command Prompt):
+<pre><code>netsh advfirewall firewall add rule name="VcXsrv WSL" dir=in action=allow program="C:\Program Files\VcXsrv\vcxsrv.exe" enable=yes profile=any remoteip=192.168.128.0/20</code></pre>
+                (Check your mode with <code>wslinfo --networking-mode</code>; in <code>mirrored</code> mode use <code>DISPLAY=127.0.0.1:0</code> instead.)</li>
+              <li>Add a shell function to <code>~/.bashrc</code> so only OVITO uses VcXsrv and other apps stay on WSLg:
+<pre><code>ovito-x() { DISPLAY=$(ip route | awk '/default/ {print $3}'):0 WAYLAND_DISPLAY= LIBGL_ALWAYS_SOFTWARE=1 ovito "$@"; }</code></pre></li>
+              <li>Start VcXsrv, then run <code>ovito-x</code>. The pointer now behaves normally.</li>
+            </ol>
+
+            <details>
+              <summary>Prompts I used (with Claude)</summary>
+              <ol>
+                <li>&ldquo;mouse pointer not showing sometimes on ovito when using from terminal&rdquo;</li>
+                <li>&ldquo;this shows blank&rdquo; (output of <code>echo $XDG_SESSION_TYPE</code>)</li>
+                <li>Output of <code>echo "DISPLAY=$DISPLAY WAYLAND=$WAYLAND_DISPLAY"</code></li>
+                <li>Error from <code>QT_QPA_PLATFORM=wayland ovito</code></li>
+                <li>&ldquo;this does not show the cursor&rdquo; / &ldquo;not working&rdquo; (xcb and cursor-theme attempts)</li>
+                <li>Output of <code>uname -r</code></li>
+                <li>&ldquo;lets stick to fixing the WSL&rdquo;</li>
+                <li>&ldquo;is not showing the mouse pointer&rdquo; (software OpenGL attempt)</li>
+                <li>OVITO&rsquo;s terminal output (portal and Vulkan warnings)</li>
+                <li>Output of <code>wsl.exe --version</code></li>
+                <li>&ldquo;its stuck without opening the ovito window&rdquo; (first VcXsrv attempt)</li>
+                <li>&ldquo;its back but no mouse pointer&rdquo; (after reverting <code>DISPLAY</code>)</li>
+                <li>&ldquo;nat&rdquo; (output of <code>wslinfo --networking-mode</code>)</li>
+                <li>Firewall rule error, then the <code>netsh</code> rule returning <code>Ok.</code></li>
+                <li>&ldquo;works!!&rdquo;</li>
+              </ol>
+            </details>
+          </article>
+        </div>
+
       </div>
     </section>
 
