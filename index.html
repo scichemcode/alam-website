@@ -165,6 +165,34 @@ a:hover{border-bottom-color:var(--accent)}
   border-bottom:none;
 }
 .side-nav a:hover{color:var(--accent)}
+.side-nav a[aria-current="page"]{color:var(--accent)}
+.side-nav a[aria-current="page"]::before{content:"\2192\00a0"}
+
+.topbar-left{display:flex;align-items:center;gap:.9rem}
+.topbar-tab{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:1rem;
+  letter-spacing:-.01em;
+}
+
+/* ============================================================
+   TABS — one panel visible at a time (JS adds [hidden])
+   ============================================================ */
+.tab[hidden]{display:none}
+.band.tab{padding-top:clamp(1rem,3vw,2rem)}
+
+.pager{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1.75rem 0 0;
+  font-family:var(--mono);
+  font-size:.75rem;
+}
+.pager a{border-bottom:none}
+.pager a:hover{text-decoration:underline}
+.pager .next{margin-left:auto;text-align:right}
 
 .side-nav-backdrop{
   position:fixed;
@@ -215,6 +243,29 @@ a:hover{border-bottom-color:var(--accent)}
   color:var(--slate);
 }
 .hero-role em{color:var(--ink);font-style:italic}
+.hero-details{
+  margin:0 0 1.5rem;
+  display:grid;
+  grid-template-columns:5.5rem 1fr;
+  gap:.45rem 1rem;
+  font-size:.98rem;
+}
+.hero-details dt{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);padding-top:.3rem}
+.hero-details dd{margin:0}
+.hero-links{display:flex;flex-wrap:wrap;gap:.6rem;margin:0}
+.btn{
+  font-family:var(--mono);
+  font-size:.78rem;
+  letter-spacing:.03em;
+  padding:.5rem .95rem;
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#fff;
+  border-radius:2px;
+}
+.btn:hover{background:var(--ink);border-color:var(--ink)}
+.btn-quiet{background:transparent;color:var(--accent);border-color:rgba(31,68,216,.4)}
+.btn-quiet:hover{background:transparent;color:var(--ink);border-color:var(--ink)}
 .hero-meta{
   display:flex;
   flex-wrap:wrap;
@@ -360,7 +411,7 @@ a:hover{border-bottom-color:var(--accent)}
 }
 .closing-photo{
   max-width:340px;
-  margin:0 auto clamp(2.5rem,6vw,4rem);
+  margin:2.5rem 0 0;
 }
 
 /* ---- skills ---- */
@@ -479,8 +530,8 @@ a:hover{border-bottom-color:var(--accent)}
 <div class="shell">
 
   <nav class="topbar">
-    <span class="topbar-mark">Denton, Texas</span>
-    <button type="button" id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="side-nav" aria-label="Open section navigation">
+    <div class="topbar-left">
+    <button type="button" id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="side-nav" aria-label="Open tab menu">
       <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
         <g class="icon-bars" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
           <line x1="2" y1="5" x2="16" y2="5"></line>
@@ -493,12 +544,15 @@ a:hover{border-bottom-color:var(--accent)}
         </g>
       </svg>
     </button>
+    <span class="topbar-tab" id="tab-label">Kriti Alam</span>
+    </div>
+    <span class="topbar-mark">Denton, Texas</span>
   </nav>
 
   <div id="side-nav-backdrop" class="side-nav-backdrop"></div>
   <nav id="side-nav" class="side-nav" aria-label="Section navigation" aria-hidden="true">
     <div class="side-nav-head">
-      <p class="side-nav-label">Sections</p>
+      <p class="side-nav-label">Tabs</p>
       <button type="button" id="side-nav-close" class="nav-toggle" aria-label="Close section navigation">
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
           <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
@@ -509,6 +563,7 @@ a:hover{border-bottom-color:var(--accent)}
       </button>
     </div>
     <ul>
+      <li><a href="#home">Home</a></li>
       <li><a href="#news">News</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#publications">Publications</a></li>
@@ -525,6 +580,10 @@ a:hover{border-bottom-color:var(--accent)}
     </ul>
   </nav>
 
+  <main id="main">
+
+  <div class="tab" id="home" data-label="Home">
+
   <header class="hero">
     <div>
       <img class="hero-photo" src="photo-2.jpg" alt="Kriti Alam" width="400" height="400" loading="eager" onerror="this.remove()">
@@ -532,8 +591,17 @@ a:hover{border-bottom-color:var(--accent)}
       <p class="hero-role">
         PhD candidate in theoretical and computational chemistry at the University of North Texas. I build <em>machine-learned force fields</em> for condensed-phase systems, and the infrastructure that trains them.
       </p>
-      <p class="hero-meta">
-        <span>MLFFs</span><span>Ab initio MD</span><span>DFT</span><span>Kubernetes</span>
+      <dl class="hero-details">
+        <dt>Position</dt><dd>Ph.D. candidate, Chemistry</dd>
+        <dt>Group</dt><dd><a href="https://ko-research.org/">Ko Research Group</a>, University of North Texas</dd>
+        <dt>Focus</dt><dd>MLFFs &middot; Ab initio MD &middot; DFT &middot; Kubernetes</dd>
+        <dt>Location</dt><dd>Denton, Texas</dd>
+        <dt>Email</dt><dd><a href="mailto:KritiAlam@my.unt.edu">KritiAlam@my.unt.edu</a></dd>
+      </dl>
+      <p class="hero-links">
+        <a class="btn" href="https://www.linkedin.com/in/kritialam" target="_blank" rel="noopener">LinkedIn &nearr;</a>
+        <a class="btn" href="https://github.com/scichemcode" target="_blank" rel="noopener">GitHub &nearr;</a>
+        <a class="btn btn-quiet" href="cv.pdf">CV (PDF)</a>
       </p>
     </div>
 
@@ -543,9 +611,18 @@ a:hover{border-bottom-color:var(--accent)}
     </div>
   </header>
 
-  <main id="main">
+    <section class="band" id="about">
+      <h2 class="band-label">About</h2>
+      <div class="band-body">
+        <p class="lede">I work on making quantum-accurate simulation cheap enough to be useful at the length and time scales where chemistry actually happens.</p>
+        <p>I am in Prof. Hsin-Yu Ko&rsquo;s group, the <a href="https://ko-research.org/">Ko Research Group</a> at UNT, developing machine-learned force fields for polymer structure prediction, computing infrared spectra in situ from ab initio trajectories, and using localized orbitals to find reaction pathways in condensed-phase systems. A good part of my time goes to the unglamorous half of that problem: generating trustworthy training data, and building pipelines that run the same way twice.</p>
+        <p>Before this I worked with Prof. Omar Valsson on machine-learned collective variables for driving polymorphic transitions in molecular crystals, and before that on lipid bilayer dynamics under salt at IIT Jodhpur. Both taught me not to trust a simulation until I have watched it converge from two directions.</p>
+      </div>
+    </section>
 
-    <section class="band" id="news">
+  </div>
+
+    <section class="band tab" id="news" data-label="News">
       <h2 class="band-label">News</h2>
       <div class="band-body">
         <ul class="entries">
@@ -610,16 +687,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="about">
-      <h2 class="band-label">About</h2>
-      <div class="band-body">
-        <p class="lede">I work on making quantum-accurate simulation cheap enough to be useful at the length and time scales where chemistry actually happens.</p>
-        <p>I am in Prof. Hsin-Yu Ko&rsquo;s group, the <a href="https://ko-research.org/">Ko Research Group</a> at UNT, developing machine-learned force fields for polymer structure prediction, computing infrared spectra in situ from ab initio trajectories, and using localized orbitals to find reaction pathways in condensed-phase systems. A good part of my time goes to the unglamorous half of that problem: generating trustworthy training data, and building pipelines that run the same way twice.</p>
-        <p>Before this I worked with Prof. Omar Valsson on machine-learned collective variables for driving polymorphic transitions in molecular crystals, and before that on lipid bilayer dynamics under salt at IIT Jodhpur. Both taught me not to trust a simulation until I have watched it converge from two directions.</p>
-      </div>
-    </section>
-
-    <section class="band" id="research">
+    <section class="band tab" id="research" data-label="Research">
       <h2 class="band-label">Research</h2>
       <div class="band-body">
         <ul class="threads">
@@ -671,7 +739,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="publications">
+    <section class="band tab" id="publications" data-label="Publications">
       <h2 class="band-label">Publications</h2>
       <div class="band-body">
         <p>Manuscripts from this work are in preparation. This section will list peer-reviewed papers and preprints as they appear.</p>
@@ -691,7 +759,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="skills">
+    <section class="band tab" id="skills" data-label="Skills">
       <h2 class="band-label">Skills</h2>
       <div class="band-body">
         <div class="skills-grid">
@@ -728,7 +796,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="development">
+    <section class="band tab" id="development" data-label="Development">
       <h2 class="band-label">Development</h2>
       <div class="band-body">
         <ul class="entries">
@@ -746,7 +814,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="troubleshooting">
+    <section class="band tab" id="troubleshooting" data-label="Troubleshooting">
       <h2 class="band-label">Claude-based Software Troubleshooting</h2>
       <div class="band-body">
 
@@ -810,7 +878,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="research-experience">
+    <section class="band tab" id="research-experience" data-label="Research Experience">
       <h2 class="band-label">Research Experience</h2>
       <div class="band-body">
         <ul class="entries">
@@ -832,7 +900,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="education">
+    <section class="band tab" id="education" data-label="Education">
       <h2 class="band-label">Education</h2>
       <div class="band-body">
         <ul class="entries">
@@ -866,7 +934,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="talks">
+    <section class="band tab" id="talks" data-label="Talks">
       <h2 class="band-label">Talks &amp; schools</h2>
       <div class="band-body">
         <ul class="entries">
@@ -922,10 +990,14 @@ a:hover{border-bottom-color:var(--accent)}
           </li>
 
         </ul>
+        <figure class="gallery-item closing-photo">
+          <img src="photo-1.jpg" alt="Kriti Alam presenting research at a conference, standing beside a projected slide">
+          <figcaption class="gallery-caption">Presenting Research At ACS-DFW MiM 2026</figcaption>
+        </figure>
       </div>
     </section>
 
-    <section class="band" id="training">
+    <section class="band tab" id="training" data-label="Training">
       <h2 class="band-label">Training/Education</h2>
       <div class="band-body">
         <ul class="entries">
@@ -946,7 +1018,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="teaching">
+    <section class="band tab" id="teaching" data-label="Teaching">
       <h2 class="band-label">Teaching</h2>
       <div class="band-body">
         <ul class="entries">
@@ -980,7 +1052,7 @@ a:hover{border-bottom-color:var(--accent)}
       </div>
     </section>
 
-    <section class="band" id="contact">
+    <section class="band tab" id="contact" data-label="Contact">
       <h2 class="band-label">Contact</h2>
       <div class="band-body">
         <p>I am happy to chat if you have scientific ideas and would love to have discussions, as well as find probable opportunities for collaboration.</p>
@@ -995,11 +1067,6 @@ a:hover{border-bottom-color:var(--accent)}
     </section>
 
   </main>
-
-  <figure class="gallery-item closing-photo">
-    <img src="photo-1.jpg" alt="Kriti Alam presenting research at a conference, standing beside a projected slide">
-    <figcaption class="gallery-caption">Presenting Research At ACS-DFW MiM 2026</figcaption>
-  </figure>
 
   <footer class="colophon">
     <span><a href="https://ko-research.org/">Ko Research Group</a> &middot; Department of Chemistry, University of North Texas &middot; Last updated August 2026</span>
@@ -1066,6 +1133,52 @@ a:hover{border-bottom-color:var(--accent)}
       toggle.focus();
     }
   });
+})();
+
+/* ============================================================
+   Tabs: each top-level panel in <main> is a tab, shown one at a
+   time and addressed by the URL hash (#research, #talks, ...).
+   A hash pointing inside a panel (e.g. #microelectronics) opens
+   that panel and scrolls to the element. Without JS, everything
+   stays visible as one page.
+   ============================================================ */
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('#main > .tab'));
+  var label = document.getElementById('tab-label');
+  var links = document.querySelectorAll('#side-nav a[href^="#"]');
+  if (!tabs.length) return;
+
+  // prev / next links at the bottom of each tab
+  tabs.forEach(function (tab, i) {
+    var pager = document.createElement('nav');
+    pager.className = 'pager';
+    pager.setAttribute('aria-label', 'Tab pager');
+    if (i > 0) pager.innerHTML += '<a class="prev" href="#' + tabs[i - 1].id + '">&larr; ' + tabs[i - 1].dataset.label + '</a>';
+    if (i < tabs.length - 1) pager.innerHTML += '<a class="next" href="#' + tabs[i + 1].id + '">' + tabs[i + 1].dataset.label + ' &rarr;</a>';
+    (tab.querySelector(':scope > .band-body') || tab).appendChild(pager);
+  });
+
+  function show() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var target = id && document.getElementById(id);
+    var tab = target && target.closest('#main > .tab');
+    if (!tab) tab = tabs[0];
+
+    tabs.forEach(function (t) { t.hidden = t !== tab; });
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].getAttribute('href') === '#' + tab.id) links[i].setAttribute('aria-current', 'page');
+      else links[i].removeAttribute('aria-current');
+    }
+    if (label) label.textContent = tab.id === 'home' ? 'Kriti Alam' : tab.dataset.label;
+    document.title = (tab.id === 'home' ? '' : tab.dataset.label + ' — ') + 'Kriti Alam — Theoretical & Computational Chemistry';
+
+    if (target && target !== tab) target.scrollIntoView();
+    else window.scrollTo(0, 0);
+    window.dispatchEvent(new Event('resize'));   // hero canvas sizes itself when visible
+  }
+
+  window.addEventListener('hashchange', show);
+  show();
 })();
 
 /* ============================================================
