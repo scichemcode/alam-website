@@ -212,21 +212,24 @@ a:hover{border-bottom-color:var(--accent)}
   display:grid;
   grid-template-columns:1fr 240px;
   gap:var(--gap);
-  align-items:end;
+  align-items:start;
   padding-bottom:clamp(3rem,7vw,5rem);
   border-bottom:1px solid var(--rule);
 }
-.hero-photo{
-  display:block;
-  width:400px;
-  max-width:100%;
-  aspect-ratio:1;
-  height:auto;
-  border-radius:50%;
-  object-fit:cover;
-  border:1px solid var(--rule);
+.hero-side{display:grid;gap:1.5rem;justify-items:end}
+.photo-window{
+  margin:0;
+  width:100%;
+  border:1px dashed var(--rule);
   background:var(--ground-deep);
-  margin:0 0 1.1rem;
+  padding:.45rem;
+}
+.photo-window img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/5;
+  object-fit:cover;
 }
 .hero-name{
   font-family:var(--display);
@@ -511,6 +514,7 @@ a:hover{border-bottom-color:var(--accent)}
    ============================================================ */
 @media (max-width:860px){
   .hero{grid-template-columns:1fr;gap:3rem;align-items:start}
+  .hero-side{grid-template-columns:repeat(2,minmax(0,180px));justify-items:start;order:-1}
   .cell{max-width:200px}
   .band{grid-template-columns:1fr;gap:1.25rem}
   .band-label{position:static}
@@ -586,7 +590,6 @@ a:hover{border-bottom-color:var(--accent)}
 
   <header class="hero">
     <div>
-      <img class="hero-photo" src="photo-2.jpg" alt="Kriti Alam" width="400" height="400" loading="eager" onerror="this.remove()">
       <h1 class="hero-name">Kriti<br>Alam</h1>
       <p class="hero-role">
         PhD candidate in theoretical and computational chemistry at the University of North Texas. I build <em>machine-learned force fields</em> for condensed-phase systems, and the infrastructure that trains them.
@@ -605,9 +608,14 @@ a:hover{border-bottom-color:var(--accent)}
       </p>
     </div>
 
-    <div class="cell">
-      <canvas id="pbc" aria-hidden="true"></canvas>
-      <span class="cell-caption">Periodic cell &middot; 12 particles</span>
+    <div class="hero-side">
+      <figure class="photo-window">
+        <img src="photo-2.jpg" alt="Kriti Alam" width="400" height="400" loading="eager">
+      </figure>
+      <div class="cell">
+        <canvas id="pbc" aria-hidden="true"></canvas>
+        <span class="cell-caption">Periodic cell &middot; 12 particles</span>
+      </div>
     </div>
   </header>
 
